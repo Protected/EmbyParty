@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+<PropertyGroup>
+    <TargetFrameworks>netstandard2.0;</TargetFrameworks>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+</PropertyGroup>
+
+<ItemGroup>
+  <None Remove="dashboard-ui\modules\embyparty\emoji.js" />
+  <None Remove="dashboard-ui\modules\embyparty\emoji_license.txt" />
+  <None Remove="dashboard-ui\modules\embyparty\emoticon.js" />
+  <None Remove="dashboard-ui\modules\embyparty\joinparty.js" />
+  <None Remove="dashboard-ui\modules\embyparty\partyapiclient.js" />
+  <None Remove="dashboard-ui\modules\embyparty\partyheader.css" />
+  <None Remove="dashboard-ui\modules\embyparty\partyheader.js" />
+</ItemGroup>
+
+<ItemGroup>
+  <EmbeddedResource Include="dashboard-ui\modules\embyparty\emoji.js" />
+  <EmbeddedResource Include="dashboard-ui\modules\embyparty\emoji_license.txt" />
+  <EmbeddedResource Include="dashboard-ui\modules\embyparty\emoticon.js" />
+  <EmbeddedResource Include="dashboard-ui\modules\embyparty\joinparty.js" />
+  <EmbeddedResource Include="dashboard-ui\modules\embyparty\partyapiclient.js" />
+  <EmbeddedResource Include="dashboard-ui\modules\embyparty\partyheader.css" />
+  <EmbeddedResource Include="dashboard-ui\modules\embyparty\partyheader.js" />
+</ItemGroup>
+
+<ItemGroup>
+	<PackageReference Include="Costura.Fody" Version="5.7.0">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="mediabrowser.server.core" Version="4.8.5" />
+	<PackageReference Include="System.Memory" Version="4.5.5" />
+	<PackageReference Include="WebSocketSharp-netstandard" Version="1.0.1" />
+</ItemGroup>
+		
+
+<ItemGroup>
+  <Folder Include="Properties\" />
+</ItemGroup>
+
+<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Exec Command="xcopy &quot;$(TargetPath)&quot; &quot;%25AppData%25\Emby-Server\programdata\plugins\&quot; /y" Condition="'$(OS)' == 'Windows_NT'" />
+  <Exec Command="EMBYDATA=$(grep &quot;^EMBY_DATA=&quot; /etc/emby-server.conf | cut -d'=' -f2); EMBYDATA=${EMBYDATA:-/var/lib/emby}; cp -f &quot;$(TargetPath)&quot; &quot;$EMBYDATA/plugins/&quot;" Condition="'$(OS)' != 'Windows_NT'" />
+</Target>
+
+</Project>
